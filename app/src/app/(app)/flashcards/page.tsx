@@ -3,6 +3,7 @@ import { obterDecksComResumo } from "@/lib/data/flashcards";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NovoDeckForm } from "@/components/flashcards/novo-deck-form";
 import { DeckCard } from "@/components/flashcards/deck-card";
+import { AvisoSemMaterias } from "@/components/aviso-sem-materias";
 
 export default async function FlashcardsPage() {
   const supabase = await createClient();
@@ -27,6 +28,8 @@ export default async function FlashcardsPage() {
           Crie decks por matéria e revise com repetição espaçada.
         </p>
       </div>
+
+      {(!materias || materias.length === 0) && <AvisoSemMaterias />}
 
       <Card>
         <CardHeader>

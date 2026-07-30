@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/chart";
 
 const config: ChartConfig = {
-  horas: { label: "Horas estudadas", color: "var(--foreground)" },
+  horas: { label: "Horas estudadas", color: "var(--primary)" },
 };
 
 export function GraficoPorDia({

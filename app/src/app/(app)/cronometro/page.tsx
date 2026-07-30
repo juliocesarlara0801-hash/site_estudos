@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { CronometroApp } from "@/components/cronometro/cronometro-app";
 import { CONFIG_POMODORO_PADRAO } from "@/lib/types/cronometro";
+import { AvisoSemMaterias } from "@/components/aviso-sem-materias";
 
 export default async function CronometroPage() {
   const supabase = await createClient();
@@ -36,6 +37,8 @@ export default async function CronometroPage() {
           e comece a estudar.
         </p>
       </div>
+
+      {(!materias || materias.length === 0) && <AvisoSemMaterias />}
 
       <CronometroApp
         materias={materias ?? []}

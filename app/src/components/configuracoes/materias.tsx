@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Trash2, CircleAlert } from "lucide-react";
 
 import {
@@ -22,6 +22,14 @@ export function Materias({ materias }: { materias: Materia[] }) {
     criarMateria,
     estadoInicial
   );
+  const [idsRemovidos, setIdsRemovidos] = useState<Set<string>>(new Set());
+
+  function remover(id: string) {
+    setIdsRemovidos((atual) => new Set(atual).add(id));
+    excluirMateria(id);
+  }
+
+  const materiasVisiveis = materias.filter((m) => !idsRemovidos.has(m.id));
 
   return (
     <div className="flex flex-col gap-4">
@@ -39,13 +47,13 @@ export function Materias({ materias }: { materias: Materia[] }) {
         </Button>
       </form>
 
-      {materias.length === 0 ? (
+      {materiasVisiveis.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           Nenhuma matéria cadastrada ainda.
         </p>
       ) : (
         <ul className="flex flex-col gap-2">
-          {materias.map((materia) => (
+          {materiasVisiveis.map((materia) => (
             <li
               key={materia.id}
               className="flex items-center justify-between rounded-lg border px-3 py-2"
@@ -63,7 +71,7 @@ export function Materias({ materias }: { materias: Materia[] }) {
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                onClick={() => excluirMateria(materia.id)}
+                onClick={() => remover(materia.id)}
                 aria-label={`Excluir ${materia.name}`}
               >
                 <Trash2 className="text-muted-foreground" />

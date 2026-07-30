@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { CircleAlert, Droplet, Eye, PersonStanding, Trash2, UtensilsCrossed } from "lucide-react";
 
 import {
@@ -29,6 +29,20 @@ export function Lembretes({ lembretes }: { lembretes: Lembrete[] }) {
     criarLembrete,
     estadoInicial
   );
+  const [idsRemovidos, setIdsRemovidos] = useState<Set<string>>(new Set());
+  const [estadosOverride, setEstadosOverride] = useState<Record<string, boolean>>({});
+
+  function remover(id: string) {
+    setIdsRemovidos((atual) => new Set(atual).add(id));
+    excluirLembrete(id);
+  }
+
+  function alternar(id: string, ativo: boolean) {
+    setEstadosOverride((atual) => ({ ...atual, [id]: ativo }));
+    alternarLembrete(id, ativo);
+  }
+
+  const lembretesVisiveis = lembretes.filter((l) => !idsRemovidos.has(l.id));
 
   return (
     <div className="flex flex-col gap-4">
@@ -39,13 +53,13 @@ export function Lembretes({ lembretes }: { lembretes: Lembrete[] }) {
         </Alert>
       )}
 
-      {lembretes.length === 0 ? (
+      {lembretesVisiveis.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           Nenhum lembrete cadastrado. Use os atalhos abaixo ou crie o seu.
         </p>
       ) : (
         <ul className="flex flex-col gap-2">
-          {lembretes.map((lembrete) => (
+          {lembretesVisiveis.map((lembrete) => (
             <li
               key={lembrete.id}
               className="flex items-center justify-between gap-3 rounded-lg border px-3 py-2"
@@ -58,16 +72,14 @@ export function Lembretes({ lembretes }: { lembretes: Lembrete[] }) {
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={lembrete.enabled}
-                  onCheckedChange={(checked) =>
-                    alternarLembrete(lembrete.id, checked)
-                  }
+                  checked={estadosOverride[lembrete.id] ?? lembrete.enabled}
+                  onCheckedChange={(checked) => alternar(lembrete.id, checked)}
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => excluirLembrete(lembrete.id)}
+                  onClick={() => remover(lembrete.id)}
                   aria-label="Excluir lembrete"
                 >
                   <Trash2 className="text-muted-foreground" />

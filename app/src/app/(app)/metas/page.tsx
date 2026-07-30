@@ -3,6 +3,7 @@ import { obterMetasComProgresso } from "@/lib/data/metas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NovaMetaForm } from "@/components/metas/nova-meta-form";
 import { MetaCard } from "@/components/metas/meta-card";
+import { AvisoSemMaterias } from "@/components/aviso-sem-materias";
 
 export default async function MetasPage() {
   const supabase = await createClient();
@@ -27,6 +28,8 @@ export default async function MetasPage() {
           Defina metas de horas de estudo por matéria e acompanhe seu progresso.
         </p>
       </div>
+
+      {(!materias || materias.length === 0) && <AvisoSemMaterias />}
 
       <Card>
         <CardHeader>
