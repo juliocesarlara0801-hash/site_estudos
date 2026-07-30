@@ -28,6 +28,10 @@ export function SeletorMateria({
         value={valor ?? undefined}
         onValueChange={(v) => onChange(v ? String(v) : null)}
         disabled={disabled}
+        items={materias.map((materia) => ({
+          value: materia.id,
+          label: materia.name,
+        }))}
       >
         <SelectTrigger className="w-56">
           <SelectValue placeholder="Selecione uma matéria" />

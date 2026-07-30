@@ -30,7 +30,14 @@ export function Filtros({ materias }: { materias: Materia[] }) {
 
   return (
     <div className="flex flex-wrap gap-3">
-      <Select value={periodo} onValueChange={(v) => atualizar("periodo", String(v))}>
+      <Select
+        value={periodo}
+        onValueChange={(v) => atualizar("periodo", String(v))}
+        items={[
+          { value: "semana", label: "Esta semana" },
+          { value: "mes", label: "Este mês" },
+        ]}
+      >
         <SelectTrigger className="w-40">
           <SelectValue />
         </SelectTrigger>
@@ -43,6 +50,13 @@ export function Filtros({ materias }: { materias: Materia[] }) {
       <Select
         value={materiaId}
         onValueChange={(v) => atualizar("materia", String(v))}
+        items={[
+          { value: "todas", label: "Todas as matérias" },
+          ...materias.map((materia) => ({
+            value: materia.id,
+            label: materia.name,
+          })),
+        ]}
       >
         <SelectTrigger className="w-48">
           <SelectValue />

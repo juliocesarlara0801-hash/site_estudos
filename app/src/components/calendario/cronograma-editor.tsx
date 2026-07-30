@@ -103,6 +103,13 @@ export function CronogramaEditor({
                   valor === "nenhuma" ? null : String(valor)
                 )
               }
+              items={[
+                { value: "nenhuma", label: "Sem matéria" },
+                ...materias.map((materia) => ({
+                  value: materia.id,
+                  label: materia.name,
+                })),
+              ]}
             >
               <SelectTrigger className="w-36">
                 <SelectValue placeholder="Matéria" />

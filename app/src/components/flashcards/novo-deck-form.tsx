@@ -39,7 +39,13 @@ export function NovoDeckForm({ materias }: { materias: Materia[] }) {
         </div>
         <div className="flex flex-col gap-1.5">
           <Label className="text-xs text-muted-foreground">Matéria (opcional)</Label>
-          <Select name="subjectId">
+          <Select
+            name="subjectId"
+            items={materias.map((materia) => ({
+              value: materia.id,
+              label: materia.name,
+            }))}
+          >
             <SelectTrigger className="w-44">
               <SelectValue placeholder="Sem matéria" />
             </SelectTrigger>
