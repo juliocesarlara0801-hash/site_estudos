@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
+import { assinarImagensCartoes } from "@/lib/data/flashcards";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NovoCartaoForm } from "@/components/flashcards/novo-cartao-form";
@@ -32,11 +33,15 @@ export default async function DeckPage({
     notFound();
   }
 
-  const { data: cartoes } = await supabase
+  const { data: cartoesBrutos } = await supabase
     .from("flashcards")
-    .select("id, front, back, next_review_at, difficulty_level, acertos, revisoes")
+    .select(
+      "id, front, back, next_review_at, difficulty_level, acertos, revisoes, front_image_url, back_image_url"
+    )
     .eq("deck_id", deckId)
     .order("created_at", { ascending: true });
+
+  const cartoes = await assinarImagensCartoes(supabase, cartoesBrutos ?? []);
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -52,7 +57,15 @@ export default async function DeckPage({
           </Button>
           <h1 className="text-2xl font-semibold tracking-tight">{deck.name}</h1>
         </div>
-        <ExportarDeckButton deckNome={deck.name} cartoes={cartoes ?? []} />
+        <ExportarDeckButton
+          deckNome={deck.name}
+          cartoes={cartoes.map((c) => ({
+            front: c.front,
+            back: c.back,
+            frontImageUrl: c.frontImageSignedUrl,
+            backImageUrl: c.backImageSignedUrl,
+          }))}
+        />
       </div>
 
       <Card>
@@ -64,7 +77,7 @@ export default async function DeckPage({
         </CardContent>
       </Card>
 
-      {!cartoes || cartoes.length === 0 ? (
+      {cartoes.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           Nenhum cartão neste deck ainda.
         </p>

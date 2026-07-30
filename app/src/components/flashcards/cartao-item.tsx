@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ImageUpload } from "@/components/flashcards/image-upload";
 
 const ROTULO_DIFICULDADE: Record<string, string> = {
   dificil: "Difícil",
@@ -44,13 +45,26 @@ export function CartaoItem({
     setAberto(false);
   }
 
+  const thumbnailUrl = cartao.frontImageSignedUrl ?? cartao.backImageSignedUrl;
+
   return (
     <div className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2">
       <Dialog open={aberto} onOpenChange={setAberto}>
-        <DialogTrigger className="flex-1 cursor-pointer text-left">
-          <div className="flex flex-col gap-0.5">
-            <span className="line-clamp-1 text-sm font-medium">{cartao.front}</span>
-            <span className="line-clamp-1 text-xs text-muted-foreground">{cartao.back}</span>
+        <DialogTrigger className="flex flex-1 cursor-pointer items-center gap-2 text-left">
+          {thumbnailUrl && (
+            <img
+              src={thumbnailUrl}
+              alt={cartao.front || "Imagem do cartão"}
+              className="size-10 shrink-0 rounded-md border object-cover"
+            />
+          )}
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <span className="line-clamp-1 text-sm font-medium">
+              {cartao.front || "(sem texto)"}
+            </span>
+            <span className="line-clamp-1 text-xs text-muted-foreground">
+              {cartao.back || "(sem texto)"}
+            </span>
           </div>
         </DialogTrigger>
         <DialogContent>
@@ -68,6 +82,14 @@ export function CartaoItem({
                 onChange={(e) => setFront(e.target.value)}
                 rows={3}
               />
+              <ImageUpload
+                cardId={cartao.id}
+                deckId={deckId}
+                lado="front"
+                label="Imagem da frente"
+                altTexto={front || "Imagem da frente"}
+                urlInicial={cartao.frontImageSignedUrl}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs text-muted-foreground">Verso</Label>
@@ -75,6 +97,14 @@ export function CartaoItem({
                 value={back}
                 onChange={(e) => setBack(e.target.value)}
                 rows={3}
+              />
+              <ImageUpload
+                cardId={cartao.id}
+                deckId={deckId}
+                lado="back"
+                label="Imagem do verso"
+                altTexto={back || "Imagem do verso"}
+                urlInicial={cartao.backImageSignedUrl}
               />
             </div>
           </div>

@@ -8,6 +8,7 @@ import { revisarFlashcard } from "@/lib/actions/flashcards";
 import type { Dificuldade, Flashcard } from "@/lib/types/flashcards";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ImageLightbox } from "@/components/flashcards/image-lightbox";
 
 const BOTOES_DIFICULDADE: {
   valor: Dificuldade;
@@ -37,6 +38,16 @@ export function Revisao({
 
   const cartaoAtual = fila[indice];
   const terminou = indice >= fila.length;
+  const imagemAtual = cartaoAtual
+    ? respostaVisivel
+      ? cartaoAtual.backImageSignedUrl
+      : cartaoAtual.frontImageSignedUrl
+    : null;
+  const textoAtual = cartaoAtual
+    ? respostaVisivel
+      ? cartaoAtual.back
+      : cartaoAtual.front
+    : "";
 
   async function avaliar(dificuldade: Dificuldade) {
     if (!cartaoAtual || enviando) return;
@@ -90,9 +101,17 @@ export function Revisao({
           <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
             {respostaVisivel ? "Resposta" : "Pergunta"}
           </span>
-          <p className="text-xl font-medium text-balance">
-            {respostaVisivel ? cartaoAtual.back : cartaoAtual.front}
-          </p>
+          {imagemAtual && (
+            <ImageLightbox
+              url={imagemAtual}
+              alt={textoAtual || (respostaVisivel ? "Imagem da resposta" : "Imagem da pergunta")}
+              className="max-h-64 w-full max-w-sm"
+              imgClassName="max-h-64 w-full"
+            />
+          )}
+          {textoAtual && (
+            <p className="text-xl font-medium text-balance">{textoAtual}</p>
+          )}
         </CardContent>
       </Card>
 
