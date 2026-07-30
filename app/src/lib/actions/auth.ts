@@ -142,7 +142,6 @@ export async function redefinirSenha(
 export async function sair() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/login");
 }
 
 export async function entrarComGoogle() {

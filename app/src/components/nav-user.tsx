@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronsUpDown, LogOut, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { sair } from "@/lib/actions/auth";
+import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -14,13 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { SidebarFooter, SidebarMenu, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 
 function iniciais(nome?: string | null, email?: string) {
   if (nome) {
@@ -40,6 +37,16 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
+  const [saindo, setSaindo] = useState(false);
+
+  async function sairEDeslogar() {
+    if (saindo) return;
+    setSaindo(true);
+    await sair();
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <SidebarFooter>
@@ -47,12 +54,13 @@ export function NavUser({
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                />
-              }
+              className={cn(
+                "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm",
+                "h-12 ring-sidebar-ring outline-hidden transition-colors",
+                "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                "data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground",
+                "focus-visible:ring-2"
+              )}
             >
               <Avatar className="size-8 rounded-lg">
                 <AvatarFallback className="rounded-lg">
@@ -67,10 +75,10 @@ export function NavUser({
                   {usuario.email}
                 </span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <ChevronsUpDown className="ml-auto size-4 shrink-0" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="w-(--anchor-width) min-w-56 rounded-lg"
+              className="w-56 rounded-lg"
               side={isMobile ? "bottom" : "right"}
               align="end"
             >
@@ -109,8 +117,12 @@ export function NavUser({
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onClick={() => sair()}>
-                <LogOut /> Sair
+              <DropdownMenuItem
+                variant="destructive"
+                disabled={saindo}
+                onClick={sairEDeslogar}
+              >
+                <LogOut /> {saindo ? "Saindo..." : "Sair"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
