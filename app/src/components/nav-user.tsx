@@ -82,21 +82,23 @@ export function NavUser({
               side={isMobile ? "bottom" : "right"}
               align="end"
             >
-              <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex flex-col px-1 py-1.5 text-left text-sm">
-                  <span className="truncate font-medium">
-                    {usuario.nome ?? "Minha conta"}
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {usuario.email}
-                  </span>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel className="px-2 py-1 text-xs text-muted-foreground">
-                Aparência
-              </DropdownMenuLabel>
               <DropdownMenuGroup>
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex flex-col px-1 py-1.5 text-left text-sm">
+                    <span className="truncate font-medium">
+                      {usuario.nome ?? "Minha conta"}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {usuario.email}
+                    </span>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="px-2 py-1 text-xs text-muted-foreground">
+                  Aparência
+                </DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => setTheme("light")}>
                   <Sun /> Claro
                   {theme === "light" && (
