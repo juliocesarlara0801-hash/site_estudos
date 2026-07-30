@@ -1,0 +1,13 @@
+# Configurações locais do Claude Code (não deve ir para o repositório)
+.claude/
+
+# Sistema operacional / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Variáveis de ambiente (nunca commitar segredos)
+.env
+.env.local
+.env.*.local
