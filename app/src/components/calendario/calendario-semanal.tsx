@@ -15,9 +15,11 @@ import { cn } from "@/lib/utils";
 export function CalendarioSemanal({
   inicioSemana,
   datasComEntrada,
+  datasComQuestoes,
 }: {
   inicioSemana: Date;
   datasComEntrada: string[];
+  datasComQuestoes?: string[];
 }) {
   const router = useRouter();
   const [exportando, setExportando] = useState(false);
@@ -70,6 +72,7 @@ export function CalendarioSemanal({
         {dias.map((dia) => {
           const iso = format(dia, "yyyy-MM-dd");
           const comEntrada = datasComEntrada.includes(iso);
+          const comQuestoes = (datasComQuestoes ?? []).includes(iso);
           const hoje = iso === format(new Date(), "yyyy-MM-dd");
           return (
             <button
@@ -87,6 +90,9 @@ export function CalendarioSemanal({
               <span className="font-medium">{format(dia, "d")}</span>
               {comEntrada && (
                 <span className="absolute bottom-1 size-1 rounded-full bg-primary" />
+              )}
+              {comQuestoes && (
+                <span className="absolute top-1 right-1 size-1 rounded-full bg-chart-2" />
               )}
             </button>
           );

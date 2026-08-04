@@ -9,6 +9,7 @@ import {
 } from "date-fns";
 
 import { createClient } from "@/lib/supabase/server";
+import { obterDatasComAtividade } from "@/lib/data/questoes";
 import { CalendarioMensal } from "@/components/calendario/calendario-mensal";
 import { CalendarioSemanal } from "@/components/calendario/calendario-semanal";
 import { Button } from "@/components/ui/button";
@@ -51,12 +52,20 @@ export default async function CalendarioPage({
     fim = addDays(inicioSemana, 6);
   }
 
-  const { data: entradas } = await supabase
-    .from("day_entries")
-    .select("date")
-    .eq("user_id", user?.id ?? "")
-    .gte("date", format(inicio, "yyyy-MM-dd"))
-    .lte("date", format(fim, "yyyy-MM-dd"));
+  const [{ data: entradas }, datasComQuestoes] = await Promise.all([
+    supabase
+      .from("day_entries")
+      .select("date")
+      .eq("user_id", user?.id ?? "")
+      .gte("date", format(inicio, "yyyy-MM-dd"))
+      .lte("date", format(fim, "yyyy-MM-dd")),
+    obterDatasComAtividade(
+      supabase,
+      user?.id ?? "",
+      format(inicio, "yyyy-MM-dd"),
+      format(fim, "yyyy-MM-dd")
+    ),
+  ]);
 
   const datasComEntrada = (entradas ?? []).map((e) => e.date as string);
 
@@ -87,11 +96,13 @@ export default async function CalendarioPage({
         <CalendarioMensal
           mes={mesAtual}
           datasComEntrada={datasComEntrada.map((d) => parseISO(d))}
+          datasComQuestoes={datasComQuestoes.map((d) => parseISO(d))}
         />
       ) : (
         <CalendarioSemanal
           inicioSemana={inicioSemana}
           datasComEntrada={datasComEntrada}
+          datasComQuestoes={datasComQuestoes}
         />
       )}
     </div>

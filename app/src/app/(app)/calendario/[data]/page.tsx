@@ -2,7 +2,9 @@ import { notFound } from "next/navigation";
 import { isValid, parseISO } from "date-fns";
 
 import { createClient } from "@/lib/supabase/server";
+import { obterAtividadesDoDia } from "@/lib/data/questoes";
 import { DiaEditor } from "@/components/calendario/dia-editor";
+import { AtividadesDoDia } from "@/components/calendario/atividades-do-dia";
 
 export default async function DiaPage({
   params,
@@ -20,7 +22,7 @@ export default async function DiaPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: entrada }, { data: materias }] = await Promise.all([
+  const [{ data: entrada }, { data: materias }, atividades] = await Promise.all([
     supabase
       .from("day_entries")
       .select("schedule, notes, conclusions, doubts, pending, completed")
@@ -32,9 +34,13 @@ export default async function DiaPage({
       .select("id, name, color")
       .eq("user_id", user?.id ?? "")
       .order("name"),
+    obterAtividadesDoDia(supabase, user?.id ?? "", dataParam),
   ]);
 
   return (
-    <DiaEditor data={dataParam} entradaInicial={entrada} materias={materias ?? []} />
+    <div className="flex flex-1 flex-col gap-4">
+      <AtividadesDoDia atividades={atividades} />
+      <DiaEditor data={dataParam} entradaInicial={entrada} materias={materias ?? []} />
+    </div>
   );
 }
